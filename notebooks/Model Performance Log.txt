@@ -1,0 +1,44 @@
+###############################
+
+#### MODEL PERFORMANCE LOG ####
+
+###############################
+
+
+Testing 2 Models Against Baseline
+features:
+['user_id', 'product_id', 'aisle_id', 'department_id']
+.............................................
+
+__________ BASELINE __________
+Train Set Perfomance:
+acc = 0.80314975516609
+f1 = 0.8908297858955271
+roc_auc=0.5
+Validation Set Performance:
+acc = 0.8064314882032668
+f1 = 0.8928448086402311
+roc_auc=0.5
+-------
+
+__________ RF with 100 est, depth 2 __________
+Train Set Perfomance:
+acc = 0.8051916132569528
+f1 = 0.8915779283639883
+roc_auc=0.5093552512500154
+Validation Set Performance:
+acc = 0.8081896551724138
+f1 = 0.8935205591587432
+roc_auc=0.5077701586008182
+-------
+
+__________ RF with 200 est, depth 2 __________
+Train Set Perfomance:
+acc = 0.8048702096685761
+f1 = 0.8916623804675281
+roc_auc=0.5046599701081705
+Validation Set Performance:
+acc = 0.8083030852994555
+f1 = 0.8937574652668635
+roc_auc=0.5050571254191295
+-------
