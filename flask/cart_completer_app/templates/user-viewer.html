@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>User Viewerr</title>
+{% endblock %}
+
+{% block body %}
+
+<p>Test</p>
+
+<div class="col-xs-3">
+    <label> Pick the User to Preview</label>
+    <form id="user_id" action="/get_user">
+        Users (between 1 and 5):
+        <input type="number" name="quantity" min="1" max="500" onchange="getUserOrders()">
+        <!-- <button action='/get_user_order'>submit</button> -->
+    </form>
+</div>
+
+<div id=d3>
+
+</div>
+
+<div id=user_order>
+
+</div>
+
+<!-- <h2>test</h2>
+{% for table in tables %}
+    <h1>{{ user_id }}</h1>
+    <h2>{{titles[loop.index]}}</h2>
+    {{ table|safe }}
+{% endfor %} -->
+
+
+
+<!-- <script>
+
+var static_data = [{
+  grad_year: 2010,
+  student_count: 42
+},{
+  grad_year: 2015,
+  student_count: 102
+},{
+  grad_year: 2016,
+  student_count: 160
+},{
+  grad_year: 2017,
+  student_count: 82
+},{
+  grad_year: 2018,
+  student_count: 48
+},{
+  grad_year: 2019,
+  student_count: 68
+},{
+  grad_year: 2020,
+  student_count: 28
+}];
+
+var tip = d3.select("#d3")
+    .append("div")
+  .attr("class", "tip")
+	.style("position", "absolute")
+	.style("z-index", "10")
+    .style("visibility", "hidden");
+    
+var svg = d3.select("#d3").append("svg").attr("id", "chart-svg").attr("class", "background-style")
+    margin = {top: 20, right: 20, bottom: 42, left: 40},
+    width = 460 - margin.left - margin.right,
+    height = 320 - margin.top - margin.bottom;
+
+
+d3.scaleBand()
+var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.05);
+    y = d3.scaleLinear().range([height, 0]);
+    
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//d3.json("apiPlaceholderURL", function(error, data) {
+  //if (error) throw error;
+
+d3.csv("{{ url_for('static', filename='data/mar_info.csv') }}", function(data) {
+	console.log(data);
+	// data = static_data;
+	
+	x.domain(data.map(function(d) { return d.MaritalStatus; }));
+	y.domain([0, d3.max(data, function(d) { return d.EmployeeCount; })]);
+
+	g.append("g")
+		.attr("class", "axis axis--x")
+		.attr("transform", "translate(0," + height + ")")
+		.call(d3.axisBottom(x))
+	 .append("text")
+		.attr("y", 6)
+		.attr("dy", "2.5em")
+		.attr("dx", width/2 - margin.left)
+		.attr("text-anchor", "start")
+		.text("Grad Year");
+
+	g.append("g")
+		.attr("class", "axis axis--y")
+		.call(d3.axisLeft(y).ticks(10))
+	  .append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6)
+		.attr("dy", "0.71em")
+		.attr("text-anchor", "end")
+		.text("Student Count");
+   
+
+	g.selectAll(".bar")
+	  .data(data)
+	  .enter().append("rect")
+		.attr("class", "bar")
+		.attr("x", function(d) { return x(d.MaritalStatus); })
+		.attr("y", function(d) { return y(d.AttrRatio); })
+		.attr("width", x.bandwidth())
+		.attr("height", function(d) { return height - y(d.AttrRatio)})
+		.on("mouseover", function(d) {return tip.text(d.AttrRatio).style("visibility", "visible").style("top", y(d.AttrRatio) - 13+ 'px' ).style("left", x(d.MaritalStatus) + x.bandwidth() - 12 + 'px')})
+		  //.on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+		  .on("mouseout", function(){return tip.style("visibility", "hidden");});
+	   });
+	
+
+
+
+</script> -->
+
+
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-xs-3">
+            <label> Pick the User to Preview</label>
+            <<form>
+                Users (between 1 and 5):
+                <input type="number" name="quantity" min="1" max="500">
+            </form>
+        </div>
+        <div class="col-xs-3">
+            <label> Choose the plot type....</label>
+            <select class="form-control" id ='first_cat'>
+                <option value="Bar">Bar</option>
+                <option value="Scatter">Scatter</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <div class="chart" id="bargraph">
+                <script>
+                    var graphs = {{plot | safe}};
+                    Plotly.plot('bargraph',graphs,{});
+                </script>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+{% endblock %}

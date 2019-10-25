@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Task Master</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h2>Parsing  <a href="{{ target_url }}" target="_blank">{{ target_url }}</a></h2>
+    
+    {% for result in results %}
+        <div>{{ result }}</div>
+    {% endfor %}
+
+    <div class="form">
+        <form action="/" method="POST">
+            <input type="text" name="task_content" id="task_content">
+            <input type="submit" value="Add Task">
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-3">
+            <label> Pick the User to Preview</label>
+            <<form>
+                Users (between 1 and 5):
+                <input type="number" name="quantity" min="1" max="500">
+            </form>
+        </div>
+        <div class="col-xs-3">
+            <label> Choose the plot type....</label>
+            <select class="form-control" id ='first_cat'>
+                <option value="Bar">Bar</option>
+                <option value="Scatter">Scatter</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <div class="chart" id="bargraph">
+                <script>
+                    // var graphs = {{plot | safe}};
+                    // Plotly.plot('bargraph',graphs,{});
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

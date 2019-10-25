@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>User Viewerr</title>
+{% endblock %}
+
+{% block body %}
+
+<p>Test</p>
+
+<h1>Temperature converter</h1>
+
+<input id='temp' onkeyup="doConversion()"/>
+<select id='unit' onchange="doConversion()">
+<option value='F'>Fahrenheit</option>
+<option value='C'>Centigrade</option>
+<option value='K'>Kelvin</option>
+</select>
+
+<div id="result">
+</div>
+
+
+<div class="col-xs-3">
+    <label> Pick the User to Preview</label>
+    <form action="/get_user">
+        Users (between 1 and 5):
+        <input type="number" name="quantity" min="1" max="500">
+    </form>
+</div>
+
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-xs-3">
+            <label> Pick the User to Preview</label>
+            <<form>
+                Users (between 1 and 5):
+                <input type="number" name="quantity" min="1" max="500">
+            </form>
+        </div>
+        <div class="col-xs-3">
+            <label> Choose the plot type....</label>
+            <select class="form-control" id ='first_cat'>
+                <option value="Bar">Bar</option>
+                <option value="Scatter">Scatter</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <div class="chart" id="bargraph">
+                <script>
+                    // var graphs = {{plot | safe}};
+                    // Plotly.plot('bargraph',graphs,{});
+                </script>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+{% endblock %}
