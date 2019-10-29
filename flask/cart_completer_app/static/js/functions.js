@@ -1,69 +1,104 @@
 // User Slider - Update Tables
-function userSlider() {
+function updateModel() {
 
     getUserCartActual();
     getUserCartPrediction();
     
 }
 
+// Select a Model
+function selectModel() {
+
+    const model_ind = parseInt($('#modelSlider').val());
+
+    // console.log(user);
+
+    $.ajax({
+        url: '/select-model',
+        type: 'GET',
+        data: { 'model_ind': model_ind },
+        dataType: 'text',
+        success: (model_name) => selectModel_Success(model_name),
+        error: (result) => selectModel_Fail(result)
+    });
+
+}
+
+// Update Model
+function selectModel_Success(model_name) {
+    $("#modelSliderOutput").html(model_name);
+    updateModel();
+}
+
+function selectModel_Fail(result) {
+    console.log('selectModel Error... Our application returned');
+    console.log(result.toString().slice(-400, 0));
+}
+
+
 // Get Actual User Cart
 function getUserCartActual() {
 
-    const user_id = parseInt($('#user_id').val());
+    const user = parseInt($('#userSlider').val());
 
-    console.log(user_id);
-
-    $("#viewing_user").html(user_id);
+    // console.log(user);
 
     $.ajax({
         url: '/get_user_order_actual',
         type: 'GET',
-        data: { 'user_id': user_id },
+        data: { 'user_ind': user },
         dataType: 'text',
-        success: (result) => getUserCartActual_Success(result),
-        error: (result) => getUserCartActual_Fail(result)
+        success: (response) => getUserCartActual_Success(response),
+        error: (response) => getUserCartActual_Fail(response)
     });
 
 }
 
 // ADD USER ORDER TABLE TO DIV
-function getUserCartActual_Success(result) {
-    console.log('Success!');
-    $("#user_order_actual").html(result)
+function getUserCartActual_Success(response) {
+    json = JSON.parse(response)
+    console.log(json["user_id"])
+    console.log('User Cart Actual Success!');
+    $("#user_order_actual").html(json["html_output"]);
+    $("#viewing_user").html(json["user_id"]);
 }
 
 function getUserCartActual_Fail(result) {
-    console.log('There was an error! Our application returned');
+    console.log('User Cart Actual Error... Our application returned');
     console.log(result.toString().slice(-400, 0));
 }
 
 function getUserCartPrediction() {
 
     const user_order_request = {
-        'user_id': parseInt($('#user_id').val()),
-        'thresh': parseInt($("#thresh-slider").val()) / 100.0
+        'user': parseInt($('#userSlider').val()),
+        'rec_count': parseInt($("#recSlider").val())
     };
 
     $.ajax({
         url: '/get_cart_prediction',
         type: 'GET',
-        data: { 'user_id': user_order_request.user_id,
-        'thresh': user_order_request.thresh},
+        data: { 'user_ind': user_order_request.user,
+        'rec_count': user_order_request.rec_count},
         dataType: 'text',
-        success: (html_output) => getUserCartPrediction_Success(html_output),
-        error: (html_output) => getUserCartPrediction_Fail(html_output)
+        success: (response) => getUserCartPrediction_Success(response),
+        error: (response) => getUserCartPrediction_Fail(response)
     });
 }
 
 // ADD USER PREDICTIONS TO DIV
-function getUserCartPrediction_Success(html_output) {
-    console.log('Success!');
+function getUserCartPrediction_Success(response) {
+    console.log('User Prediction Ajax Success!');
+    json = JSON.parse(response)
+    html_output = json['html_output'];
+    cart_metrics = json['cart_metrics']
     $("#user_order_prediction").html(html_output);
+    $("#cart_metrics").html(cart_metrics);
 }
 
-function getUserCartPrediction_Fail(table) {
+function getUserCartPrediction_Fail(response) {
     console.log('There was an error! Our application returned');
-    console.log(table.toString().slice(-400, 0));
+    console.log(response.toString().slice(-400, 0));
 }
 
 

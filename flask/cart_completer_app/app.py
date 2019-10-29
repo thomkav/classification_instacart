@@ -22,13 +22,34 @@ CORS(app)
 with open('cart_completer_app/data/merged_user_orders.pkl', 'rb') as file:
     merged_orders = pickle.load(file)
 
+with open('cart_completer_app/data/combined_model_preds.pkl', 'rb') as file:
+    combined_model_preds = pickle.load(file)
+
+
+
+unique_users = merged_orders.user_id.unique()
+user_ct = len(unique_users)
+
 @app.route('/')  # the site to route to
 def api_test():
 
     # tables = [sample_user_orders.to_html(classes='ts1')]
     # titles = ['sample user orders']
 
-    return render_template('user-viewer.html')    
+    return render_template('user-viewer.html', user_ct=user_ct)    
+
+
+#########################
+# SWAP MODEL
+#########################
+@app.route('/select-model', methods=['GET','POST'])
+def select_model():
+
+    # tables = [sample_user_orders.to_html(classes='ts1')]
+    # titles = ['sample user orders']
+
+    return render_template('user-viewer.html', user_ct=user_ct)  
+
 
 
 #########################
@@ -36,29 +57,38 @@ def api_test():
 #########################
 @app.route('/get_user_order_actual', methods=['GET','POST'])
 def get_user_orders():
-    # with open('data/actual_user_orders.pkl','rb') as file:
-    #     sample_user_orders = pickle.load(file)
     
-    user_id = int(request.args.get('user_id'))
+    user_ind = int(request.args.get('user_ind'))
+    user_id = unique_users[user_ind]
+    print(user_id)
 
     # Remove rows where add_to_cart_order is NaN.
     _ = merged_orders.dropna()
 
-    table_output = (
-        _[_.user_id == user_id][['product_name', 'add_to_cart_order','prev_order_ct']]
-        ).sort_values('add_to_cart_order')
+    _ = (_[_.user_id == user_id][['product_name', 'add_to_cart_order','prev_order_ct']]
+        ).sort_values('add_to_cart_order')[['add_to_cart_order', 'product_name']]
+    
+    _.columns = ['Add Order', 'Product']
 
-    html_output = table_output.style.set_table_styles(
-            [
-                {'selector': 'thead th',
-            'props': [('background-color', 'AliceBlue')]},
-                {'selector': 'thead th',
-            'props': [('background-color', 'AliceBlue')]},
-                ]).hide_index().render()
+    # def highlight_user_cart_matches(s):
+    #     if s['add_to_cart_order'] > 0:
+    #         return ['background-color: lightgreen'] * col_length
+    #     else:
+    #         return ['background-color: lightgray'] * col_length
+
+    html_output = _.style.hide_index().render()
+
+    # html_output = table_output.style.set_table_styles(
+    #         [
+    #             {'selector': 'thead th',
+    #         'props': [('background-color', 'AliceBlue')]},
+    #             {'selector': 'thead th',
+    #         'props': [('background-color', 'AliceBlue')]},
+    #             ]).hide_index().render()
 
     status = 200
 
-    return html_output, status
+    return jsonify({"html_output": html_output, 'user_id': str(user_id)})
 
 ##############################
 # FILTER / RETURN PREDICTION #
@@ -68,7 +98,8 @@ def get_cart_prediction():
     try:
         # with open('data/model_preds.pkl','rb') as file:
         #     sample_user_orders = pickle.load(file)
-        user_id = int(request.args.get('user_id'))
+        user_ind = int(request.args.get('user_ind'))
+        user_id = unique_users[user_ind]
         
         _ = (merged_orders[merged_orders.user_id == user_id]
         ).sort_values('user_id').drop(
@@ -77,99 +108,47 @@ def get_cart_prediction():
             )
 
         try:
-            thresh = float(request.args.get('thresh'))
-            print('got threshold values:',thresh)
+            rec_count = int(request.args.get('rec_count'))
+            print('got threshold values:',rec_count)
         except:
-            thresh = 0.5
+            rec_count = 0.5
         
         # Filter Threshold
-        _ = _[_.pred_prob > thresh]
+        # _ = _[_.pred_prob > thresh]
+        
+        # Recommendation Count Threshold
         _.sort_values(by=['pred_prob'], ascending=False, inplace=True)
+        _ = _[['add_to_cart_order', 'product_name']]
+        _.columns = ['Add To Cart Order', 'Product']
+        _ = _[:rec_count]
 
-        html_output = _.style.set_table_styles(
-            [
-                {'selector': 'thead th',
-            'props': [('background-color', 'AliceBlue')]},
-                {'selector': 'thead th',
-            'props': [('background-color', 'AliceBlue')]},
-                ]).hide_index().render()
+        cart_metrics = f'Relevancy: {round(_.dropna().shape[0]/_.shape[0], 3)*100}%'
+
+        # print(_)
+
+        col_length = len(_.columns)
+
+        def highlight_user_cart_matches(s):
+            if s['Add To Cart Order'] > 0:
+                return ['background-color: lightgreen'] * col_length
+            else:
+                return ['background-color: lightgray'] * col_length
+
+        html_output = _.style.apply(highlight_user_cart_matches, axis=1).hide_columns(subset=['Add To Cart Order']).hide_index().render()
+
+        # html_output = _.style.set_table_styles(
+        #     [
+        #         {'selector': 'thead th',
+        #     'props': [('background-color', 'AliceBlue')]},
+        #         {'selector': 'thead th',
+        #     'props': [('background-color', 'AliceBlue')]},
+        #         ]).hide_index().render()
 
         status = 200
-        return html_output, status
+        return jsonify({'html_output': html_output, 'status': status, 'cart_metrics':cart_metrics})
     except:
         status = 400
         return None, status
-
-
-# #########################
-# # RETURN PREDICTION
-# #########################
-# @app.route('/get_cart_prediction', methods=['GET','POST'])
-# def get_cart_prediction():
-#     try:
-#         with open('data/model_preds.pkl','rb') as file:
-#             sample_user_orders = pickle.load(file)
-#         user_id = int(request.args.get('user_id'))
-        
-#         df = (
-#             sample_user_orders
-#             [sample_user_orders.user_id == user_id]
-#             ).sort_values('user_id')[['product_name', 'order_prob']]
-
-#         html_output = df.style.set_table_styles(
-#             [
-#                 {'selector': 'thead th',
-#             'props': [('background-color', 'AliceBlue')]},
-#                 {'selector': 'thead th',
-#             'props': [('background-color', 'AliceBlue')]},
-#                 ]).hide_index().render()
-
-#         status = 200
-#         return html_output, status
-#     except:
-#         status = 400
-#         return None, status
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @app.route('/view-user')  # the site to route to
-# def present_user_orders():
-
-#     tables = [sample_user_orders.to_html(classes='ts1')]
-#     titles = ['sample user orders']
-
-#     return render_template('user-viewer.html',tables=tables, titles=titles)        
-
-
-
-# @app.route('/convert_temperature', methods=['POST'])
-# def convert_temps():
-#     "Only route defined for this Flask app!"
-#     print(f"Input is {request.json}")
-
-#     try:
-#         result = api.convert_temp_from_unit(request.json['temperature'], request.json['unit'])
-#         status = 200
-#     except KeyError:
-#         result = {
-#             'message': 'Need to have input keys temperature and unit. Unit must be K, F, or C',
-#             'input': request.json
-#         }
-#         status = 400
-
-#     return jsonify(result), status
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

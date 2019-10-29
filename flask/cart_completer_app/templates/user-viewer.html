@@ -8,46 +8,63 @@
 
 <div class="u-full-width" style="margin-left:5%;margin-right:5%;margin-top:2%">
   <div class="row">
+    <div class="one-half column">
+      <h4>InstaCart Order Previewer</h4>
+      <p>View the predictions of an InstaCart Recommendation Model,
+        side by side with their actual order. <strong>Only products which were reordered are shown.</strong></p>
+      <p>Drag the sliders to change user, as well as the number of products recommended.</p>
+      <p>Matched recommendations are highlighted in <span style="background-color:lightgreen">green</span>.</p>
+    </div>
     <div class="one-third column">
-      <h4>User Order Preview</h4>
-      <div class="userslider">
-        <h4>Slide to change user. Viewing user <span id="viewing_user"></span></h4>
-        <input type="range" min="1" max="500" value="50" class="slider" id="user_id"
-          onchange="userSlider()">
+      <style>
+        .slidecontainer p, h6 {
+          margin-bottom:0;
+        }
+
+      </style>
+      <div class="slidecontainer">
+        <div class="userslider">
+          <h6>Viewing user... <span id="viewing_user"></span></h6>
+          <input type="range" min="1" max="{{user_ct}}" value="1" class="slider" id="userSlider"
+            onmouseup="updateModel()">
+          <p style="top: -40px; left:200px; position: relative; pointer-events: none; margin-bottom:0">Change User</p>
+        </div>
+        <h6>Showing Top <output id="recSliderOutput">3</output> Predictions.</h6>
+        <div><input type="range" min="3" max="10" value="3" class="slider" id="recSlider" onmousedown="updateModel()"
+            oninput="recSliderOutput.value = recSlider.value; updateModel()">
+          <p style="top: -40px; left:200px; position: relative; pointer-events: none; margin-bottom:0">Change Prediction Count</p>
+        </div>
+        <h6>Select A Model</h6>
+        <div><input type="range" min="3" max="10" value="3" class="slider" id="modelSlider" onmousedown="updateModel()"
+            oninput="modelSliderOutput.value = modelSlider.value; updateModel()">
+          <p id='modelSliderOutput 'style="top: -40px; left:200px; position: relative; pointer-events: none; margin-bottom:0">Select a Model</p>
+        </div>
       </div>
-      <!-- <label> Pick the User to Preview</label> -->
-      <!-- <form id="user_id" action="/get_user">
+    </div>
+    <!-- <label> Pick the User to Preview</label> -->
+    <!-- <form id="user_id" action="/get_user">
         <p>View the Order for the Following User:</p>
         <input type="number" placeholder="1" name="quantity" min="1" max="500" value="1" onchange="getUserCartActual()">
         <button type='button' onclick="getUserCartActual()">Get User Orders</button>
         <button type='button' onclick="getUserCartPrediction()">Get Predictions</button>
       </form> -->
 
-    </div>
-    <div class="one-third column">
-      
-      <div class="slidecontainer">
-        <h4>Prediction Threshold:</h4>
-        <input type="range" min="0" max="100" value="50" class="slider" id="thresh-slider"
-          onchange="getUserCartPrediction()">
-      </div>
-
-    </div>
   </div>
 </div>
-<div class="u-full-width" style="margin-left:5%;margin-top:0%">
+</div>
+<div class="u-full-width" style="margin-left:5%;margin-top:0%;padding-right:15%">
   <div class="row">
     <div class="one-third column">
-      <h4>User Order (Actual)</h4>
-      <div id="user_order_actual">This index.html page is a placeholder with the CSS, font and favicon. It's just
-        waiting for you to add some
-        content! If you need some help hit up the <a href="http://www.getskeleton.com">Skeleton documentation</a>.</div>
+      <h5>Actual User's Cart</h5>
+      <div id="user_order_actual"><button onclick="userSlider()">View User Orders</button></div>
     </div>
     <div class="one-third column">
-      <h4>User Order (Predicted)</h4>
-      <div id="user_order_prediction">This index.html page is a placeholder with the CSS, font and favicon. It's just
-        waiting for you to add some
-        content! If you need some help hit up the <a href="http://www.getskeleton.com">Skeleton documentation</a>.</div>
+      <h5>Cart Predictions</h5>
+      <div id="user_order_prediction"><button onclick="userSlider()">View User Orders</button></div>
+    </div>
+    <div class="one-third column">
+        <h5>Prediction Metrics</h5>
+        <div id="cart_metrics"><button onclick="userSlider()">View User Orders</button></div>
     </div>
   </div>
 </div>
