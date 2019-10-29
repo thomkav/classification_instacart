@@ -1,16 +1,51 @@
+
+
 body            { font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;}
 a, h1, h2       { color: #377ba8; }
 h1, h2          { margin: 0; }
 h1              { border-bottom: 2px solid #eee; }
 h2              { font-size: 1.2em; }
 
-table.dataframe, .dataframe th, .dataframe td {
-  border: none;
-  border-bottom: 1px solid #C8C8C8;
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+/* table.dataframe, .dataframe th, .dataframe td {
+  border: 1px solid black;
   border-collapse: collapse;
-  text-align:left;
-  padding: 10px;
-  margin-bottom: 40px;
+  text-align:center;
   font-size: 0.9em;
 }
 
@@ -28,3 +63,4 @@ tr:nth-child(odd)		{ background-color:#eee; }
 tr:nth-child(even)	{ background-color:#fff; }
 
 tr:hover            { background-color: #ffff99;}
+ */
